@@ -26,16 +26,41 @@
        
     <!--Add a nav bar here -->
     <!-- Navigation bar -->
-    <nav class="navbar navbar-light bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark">
         <div class="container-fluid">
+            
             <div class="navbar-header">
                 
+                  <a class="navbar-brand" style="padding-top: 0px; font-size: 30px; color: white;"href="{% url 'djangoapp:index' %}">Dealership Review</a>
+                  
             </div>
-            <ul class="nav navbar-nav navbar-right"> 
-                <li>
-                    <a class="btn btn-link" href="{% url 'djangoapp:about' %}">About Us</a>
-                    <a class="btn btn-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active">
+                    <a class="btn btn-link" style="color: white;" href="{% url 'djangoapp:about' %}">About Us</a>
                 </li>
+                <li class="nav-item">
+                    <a class="btn btn-link" style="color: white;" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+                </li>
+              </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li>
+                    <a class="btn btn-link" href="#">{{ user.first_name }}{{ user.username }}</a>
+                    <a class="btn btn-link" href="#">Logout</a>
+                </li>
+                {% else %}
+                <li>
+                    <form class="form-inline" action="#" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input style="margin: 2px;" type="text" class="form-control" placeholder="Username" name="username" >
+                            <input style="margin: 2px;" type="password" class="form-control" placeholder="Password" name="psw" >
+                            <button style="margin: 2px;" class="btn btn-primary" type="submit">Login</button>
+                            <a style="margin: 2px;" class="btn btn-link" href="#">Sign Up</a>
+                        </div>
+                    </form>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </nav>
