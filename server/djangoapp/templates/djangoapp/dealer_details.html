@@ -84,8 +84,8 @@
             {% endfor %}
         </div>
         {% if user.is_authenticated %}
-        <a href="{% url 'djangoapp:add_review' 1 %}">Add Review</a>
-        <a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{dealer.full_name}}</a>
+        <a href="{% url 'djangoapp:add_review' 6 %}">Add Review</a>
+        
         {% endif %}
     </body>
 

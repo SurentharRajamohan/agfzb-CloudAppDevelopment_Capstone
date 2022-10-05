@@ -146,10 +146,10 @@ def get_dealer_details(request, dealership):
 #         result = post_request(url, json_payload, dealerId=dealer_id)
 
 #         return render(request, 'djangoapp/add_review.html', context)
-def add_review(request, id):
+def add_review(request, dealer_id):
     context = {}
     dealer_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/4f3dab5f-e011-4b95-b1dd-09ba787c1077/dealership-package/get-dealership.json"
-    dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
+    dealer = get_dealer_by_id_from_cf(dealer_url, id=dealer_id)
     context["dealer"] = dealer
     if request.method == 'GET':
         # Get cars for the dealer
