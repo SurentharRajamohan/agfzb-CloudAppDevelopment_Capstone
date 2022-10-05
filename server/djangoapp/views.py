@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarMake, CarModel
-# from .restapis import related methods
+from .restapis import get_dealers_from_cf, get_dealer_by_state_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -86,16 +86,52 @@ def registration_request(request):
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
-    context = {}
     if request.method == "GET":
-        return render(request, 'djangoapp/index.html', context)
+        url = "https://au-syd.functions.appdomain.cloud/api/v1/web/4f3dab5f-e011-4b95-b1dd-09ba787c1077/dealership-package/get-dealership.json"
+        # Get dealers from the URL
+        dealerships = get_dealers_from_cf(url)
+        # Concat all dealer's short name
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # Return a list of dealer short name
+        return HttpResponse(dealer_names)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
 # ...
-
+def get_dealer_details(request, dealership):
+    if request.method == "GET":
+        url = "https://au-syd.functions.appdomain.cloud/api/v1/web/4f3dab5f-e011-4b95-b1dd-09ba787c1077/dealership-package/get-review.json"
+        # Get reviews from the URL
+        reviews = get_dealer_reviews_from_cf(url, dealership)
+        # Concat all dealer's short name
+        dealer_names = ' '.join([dealer.name for dealer in reviews])
+        # Return a list of dealer short name
+        dealer_sentiments = ' '.join([dealer.sentiment for dealer in reviews])
+        dealer_reviews = ' '.join([dealer.review for dealer in reviews])
+        final_list = [*dealer_names, *dealer_sentiments, *dealer_reviews]
+        # dealer_names += ' '.join([dealer.review for dealer in reviews])
+        return HttpResponse(final_list)
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 # ...
+def add_review(request, dealer_id):
+    if(User.is_authenticated):
+        # { "review": { "id": 1114, "name": "Upkar Lidder", 
+        # "dealership": 15, "review": "Great service!", "purchase": false, 
+        # "another": "field", 
+        # "purchase_date": "02/16/2021", 
+        # "car_make": "Audi", "car_model": "Car", 
+        # "car_year": 2021 } }
+        review = dict()
+        review["time"] = datetime.utcnow().isoformat()
+        review["dealership"] = dealer_id
+        review["review"] = "This is a great car dealer"
+        review["name"] = "Surin"
+        review["id"] = 115
+        json_payload = dict()
+        json_payload["review"] = review
+        url = "https://au-syd.functions.appdomain.cloud/api/v1/web/4f3dab5f-e011-4b95-b1dd-09ba787c1077/dealership-package/post-review"
+        result = post_request(url, json_payload, dealerId=dealer_id)
 
+        return HttpResponse(result)
