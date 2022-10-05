@@ -1,18 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dealership Review</title>
-    {% load static %}
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
-
-    <body>
-
-    <!--Add a nav bar here -->
-
+    <head>
+        <meta charset="UTF-8">
+        <title>Dealership Review</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+        {% load static %}       
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">  
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>  
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>  
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>  
+        <link href="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.css" rel="stylesheet">
+        {% load static %}
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <!-- For state search in the table-->
+        <script src="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.21.0/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+    </head>
+    
+        <body>
+        
+        <!-- Navigation bar -->
+       
+        
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+            <div class="container-fluid">
+                
+                <div class="navbar-header">
+                    
+                      <a class="navbar-brand" style="padding-top: 0px; font-size: 30px; color: white;"href="{% url 'djangoapp:index' %}">Dealership Review</a>
+                      
+                </div>
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="btn btn-link" style="color: white;" href="{% url 'djangoapp:about' %}">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-link" style="color: white;" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+                    </li>
+                  </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                    <li>
+                        <a class="btn btn-link" href="#">{{ user.first_name }}{{ user.username }}</a>
+                        <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input style="margin: 2px;" type="text" class="form-control" placeholder="Username" name="username" >
+                                <input style="margin: 2px;" type="password" class="form-control" placeholder="Password" name="psw" >
+                                <button style="margin: 2px;" class="btn btn-primary" type="submit">Login</button>
+                                <a style="margin: 2px;" class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                            </div>
+                        </form>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    
     <!-- Add reviews as cards -->
-
+        <div class="card-columns">
+            {% for review in reviews %}
+                <div style="margin:20px;" class="card">
+                    
+                    <img class="card-img-left" src="{{MEDIA_URL}}/emoji/{{review.sentiment}}.png"/>
+                    
+                    <div class="card-body">
+                        
+                        <h3 class="card-title">{{review.car_make}}, {{review.car_model}}</h3>
+                        <h5 class="card-title">{{review.car_year}}</h5>
+                        <p class="card-text">{{review.review}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'djangoapp:add_review' 1 %}">Add Review</a>
+        <a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{dealer.full_name}}</a>
+        {% endif %}
     </body>
 
 </html>
