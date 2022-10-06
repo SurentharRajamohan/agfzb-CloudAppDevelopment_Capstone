@@ -109,6 +109,7 @@ def get_dealer_details(request, dealership):
         reviews = get_dealer_reviews_from_cf(url, dealership)
         context = dict()
         context["reviews"] = reviews
+        context["id"] = dealership
         # Concat all dealer's short name
         # dealer_names = ' '.join([dealer.name for dealer in reviews])
         # Return a list of dealer short name
@@ -146,11 +147,13 @@ def get_dealer_details(request, dealership):
 #         result = post_request(url, json_payload, dealerId=dealer_id)
 
 #         return render(request, 'djangoapp/add_review.html', context)
-def add_review(request, dealer_id):
+def add_review(request, id):
     context = {}
     dealer_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/4f3dab5f-e011-4b95-b1dd-09ba787c1077/dealership-package/get-dealership.json"
-    dealer = get_dealer_by_id_from_cf(dealer_url, id=dealer_id)
+    dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
     context["dealer"] = dealer
+    print(dealer)
+    context["id"] = id
     if request.method == 'GET':
         # Get cars for the dealer
         cars = CarModel.objects.all()
@@ -164,8 +167,9 @@ def add_review(request, dealer_id):
             username = request.user.username
             print(request.POST)
             payload = dict()
-            car_id = request.POST["car"]
-            car = CarModel.objects.get(pk=car_id)
+            cars = request.POST["car"]
+            print(cars)
+            car = CarModel.objects.get(id=cars)
             payload["time"] = datetime.utcnow().isoformat()
             payload["name"] = username
             payload["dealership"] = id
@@ -176,7 +180,7 @@ def add_review(request, dealer_id):
                 if request.POST["purchasecheck"] == 'on':
                     payload["purchase"] = True
             payload["purchase_date"] = request.POST["purchasedate"]
-            payload["car_make"] = car.make.name
+            payload["car_make"] = car.carmake.name
             payload["car_model"] = car.name
             payload["car_year"] = int(car.year.strftime("%Y"))
 
@@ -184,4 +188,4 @@ def add_review(request, dealer_id):
             new_payload["review"] = payload
             review_post_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/4f3dab5f-e011-4b95-b1dd-09ba787c1077/dealership-package/post-review"
             post_request(review_post_url, new_payload, id=id)
-        return redirect("djangoapp:dealer_details", id=id)
+        return redirect("djangoapp:dealer_details", dealership=id)
