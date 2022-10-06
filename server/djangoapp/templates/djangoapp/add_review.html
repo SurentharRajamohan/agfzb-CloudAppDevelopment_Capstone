@@ -77,7 +77,7 @@
         <textarea class="form-control" id="content" name="content" rows="2" required></textarea>
         <br>
         <input style= "margin-left: 2px;" class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck"></input>
-        <label style= "margin-left: 18px;">Has purchased the car from the {{dealer.full_name}}?</label>
+        <label style= "margin-left: 18px;">Has purchased the car from this dealer {{dealer.full_name}}?</label>
         <br>
         <label>Select your car (model-make-year): <select name="car" id="car" class="form-select" required>
             {% for car in cars %}
@@ -86,8 +86,8 @@
         </select></label>
         <br>
         <label>Select your purchase date</label>
-        <input class="datepicker form-control" type="date" name="purchasedate" id="purchasedate">
-        <button style="margin-top: 20px;" class="btn btn-primary" type="submit">Submit</button>
+        <input style= "width: 50%;" class="datepicker form-control" type="date" name="purchasedate" id="purchasedate">
+        <button onclick="return checkWordCount()" style="margin-top: 20px;" class="btn btn-primary" type="submit">Submit</button>
     </form>
     </body>
     <script type="text/javascript">
@@ -95,4 +95,16 @@
            format: 'mm/dd/yyyy'
          });
    </script>
+   <script type="text/javascript">
+    function checkWordCount(){
+        s = document.getElementById("content").value;
+        s = s.replace(/(^\s*)|(\s*$)/gi,"");
+        s = s.replace(/[ ]{2,}/gi," ");
+        s = s.replace(/\n /,"\n");
+        if (s.split(' ').length <= 10) {
+            alert("We would highly appreciate if you are abled to give a detailed review with a minimum of 10 words. Thanks a lot");
+    return false;
+        }
+    }
+    </script>
 </html>

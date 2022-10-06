@@ -29,7 +29,7 @@ APPEND_SLASH = True
 
 ALLOWED_HOSTS = ["surenthar.au-syd.mybluemix.net", "localhost"]
 
-
+# CSRF_TRUSTED_ORIGINS = ['https://au-syd.functions.appdomain.cloud/api/v1/web/4f3dab5f-e011-4b95-b1dd-09ba787c1077/dealership-package/post-review']
 # Application definition
 
 INSTALLED_APPS = [
